@@ -13,7 +13,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from preprocess import preprocess_features
+import preprocess
 
 if __name__ == "__main__":
     data = []
@@ -26,20 +26,20 @@ if __name__ == "__main__":
     print(dataFrame.head())
 
     # Getting features and labels
-    processed_features = np.array(preprocess_features(dataFrame['text']))
+    # Number of good/bad words.
+    # Text array
+    textArray = preprocess.preprocess_features(dataFrame['text'])
+
+    # If we are using positive/negative word feature vector
+    # positiveWordFeature = preprocess.getPositiveWordFeature(dataFrame['text'])
+    # negativeWordFeature = preprocess.getNegativeWordFeature(dataFrame['text'])
+    processed_features = np.array(textArray)
     labels = dataFrame['label']
 
-    # Converting labels to positive / neutral / negative values
-    for i, item in enumerate(labels):
-        if item == -1:
-            labels[i] = 'negative'
-        elif item == 0:
-            labels[i] = 'neutral'
-        else:
-            labels[i] = 'positive'
-
     # Splitting into training and testing data
-    X_train, X_test, y_train, y_test = train_test_split(processed_features, labels, test_size=0.2, random_state=0)
+    # TODO: Try different splits
+    # TODO: Try more features?
+    X_train, X_test, y_train, y_test = train_test_split(processed_features, labels, test_size=0.3, random_state=0)
 
     # Forest classifier
     text_classifier = RandomForestClassifier(n_estimators=200, random_state=0)
@@ -49,9 +49,28 @@ if __name__ == "__main__":
     predictions = text_classifier.predict(X_test)
 
     # Output metrics about predictions.
-    print(confusion_matrix(y_test, predictions))
-    print(classification_report(y_test, predictions))
-    print(accuracy_score(y_test, predictions))
+    print('confusion matrix', confusion_matrix(y_test, predictions))
+    print('classification report', classification_report(y_test, predictions))
+    print('accuracy', accuracy_score(y_test, predictions))
+
+    # Getting michigan data
+    with open('data/preprocessed_michigan_tweets.json', 'r') as f:
+        michigan_tweets_data = [json.loads(line) for line in f]
+
+    michigan_tweets = pd.DataFrame(michigan_tweets_data)
+    # Preprocesses features
+    michigan_text_array = preprocess.preprocess_features(michigan_tweets['text'])
+    processed_michigan_features = np.array(michigan_text_array)
+
+    # This fails because when we preprocess features on line 62 TfidfVectorizer returns a different shaped array for some reason.
+    # michigan_predictions = text_classifier.predict(michigan_text_array)
+
+    # Outputting
+    # for i, tweet in enumerate(michigan_tweets):
+    #     print('Rating: {}, tweet: {}'.format(michigan_predictions, tweet))
+
+
+
 
 
 
