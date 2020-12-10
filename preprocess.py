@@ -10,7 +10,9 @@ import numpy as np
 from nltk.stem import PorterStemmer
 
 # TD-IF stuff
-from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+
 
 def getPositiveWordFeature(data):
     """
@@ -90,10 +92,12 @@ def preprocess_features(features):
 
         processed_features.append(' '.join(stemmed_words))
 
-    vectorizer = TfidfVectorizer(max_features=2500, min_df=7, max_df=0.8)
-    processed_features = vectorizer.fit_transform(processed_features).toarray()
+    # vectorizer = TfidfVectorizer(max_features=2500, min_df=7, max_df=0.8)
+    vectorizer = CountVectorizer(min_df=1)
+    X = vectorizer.fit_transform(processed_features).toarray()
+    # processed_features = vectorizer.fit_transform(processed_features).toarray()
 
-    return processed_features
+    return X
 
 
 def preprocess(filename, outputFile, filter=None):
