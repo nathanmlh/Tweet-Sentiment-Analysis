@@ -13,17 +13,12 @@ import cartopy.crs as ccrs
 import cartopy.io.shapereader as shpreader
 import matplotlib.patches as mpatches
 
-# =============================================================================
-# def dataWorldView(locs):
-#     ax = plt.axes(projection=ccrs.PlateCarree())
-#     ax.coastlines()
-#     
-#     for lon, lat in locs:
-#         plt.plot(lon, lat, marker='ro', transform=ccrs.Geodetic())
-#     
-#     plt.show()
-# =============================================================================
-
+'''
+This function creates and saves a colored map of michigan based on the given 
+average sentiment. 
+aveSentiment: A double ranging from -1 to 1 representing the average sentiment
+file_name: This is the title of the map and the name of the saved file.
+'''
 def michiganSentimateGraph(aveSentiment, file_name):
     fig = plt.figure()
     ax = fig.add_axes([0, 0, 1, 1], projection=ccrs.LambertConformal())
@@ -66,17 +61,16 @@ def michiganSentimateGraph(aveSentiment, file_name):
     plt.legend([teer1, teer2, teer3, teer4, teer5], labels,
                loc='lower left', bbox_to_anchor=(0.025, -0.1), fancybox=True)
     
-    plt.savefig(file_name, bbox_inches='tight')
+    plt.savefig(file_name + '.png', bbox_inches='tight')
     plt.show()
     
-# =============================================================================
-# for i in range(-10,15,5): 
-#     x = i/10.0
-#     michiganSentimateGraph(i/10.0, "michigan-" + str(x) + ".png")
-# =============================================================================
+# all of the average sentiments
 aveSentiment = [-41/54.0, -34/43.0, -37/43.0, -5/7.0, -128/172.0, -230/307.0, 
                 -29/49.0, -58/79.0]
+# the dates that the seentiments were collected.
 dates = ['11-27-2020', '11-28-2020', '11-30-2020', '12-03-2020', '12-08-2020',
          '12-09-2020', '12-10-2020', '12-11-2020']
+
+# make and save the images
 for i in range(len(dates)):
-    michiganSentimateGraph(aveSentiment[i], (dates[i] + "- Michigan Sentiment.png"))
+    michiganSentimateGraph(aveSentiment[i], (dates[i] + "- Michigan Sentiment"))
